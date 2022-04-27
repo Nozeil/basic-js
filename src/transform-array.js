@@ -20,32 +20,35 @@ function transform(arr) {
   }
 
   let result = [];
+  let discarded;
 
   arr.forEach((item, index) => {
-    if (item === '--discard-prev') {
+
+    if (item === '--discard-prev' && !discarded) {
       result.pop();
     }
-    if (item === '--double-next') {
-      result.push(arr[index - 1]);
+
+    if (item === '--double-prev' && result[result.length - 1] && !discarded) {
+      result.push(result[result.length - 1]);
     }
-    if (item !== '--discard-next' && item !== '--discard-prev' && item !== '--double-next' && item !== '--double-prev') {
+
+    if (item !== '--discard-prev' &&
+      item !== '--discard-next' &&
+      item !== '--double-next' &&
+      item !== '--double-prev' && 
+      item !== discarded) {
       result.push(item);
+    } else if (item === '--discard-next' && arr[index + 1]) {
+      discarded = arr[index + 1];
     }
-    if (item === '--discard-next') {
-      result.pop();
-    }
-    if (item === '--double-next') {
-      result.push(arr[index + 1]);
+
+    if (item === '--double-next' && arr[index + 1]) {
+      result.push(arr[index + 1])
     }
 
   });
   return result;
 }
-
-/* --discard-next исключает следующий за ней элемент исходного массива из преобразованного массива.
---discard-prev исключает предшествующий ей элемент исходного массива из преобразованного массива.
---double-next дублирует следующий за ней элемент исходного массива в преобразованном массиве.
---double-prev дублирует предшествующий ей элемент исходного массива в преобразованном массиве. */
 
 module.exports = {
   transform
